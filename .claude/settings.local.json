@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/claud/.claude/projects/c--Users-claud-Desktop-LuDmySpin/memory/**)",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(grep -Hm1 ^description: 'c:\\\\Users\\\\claud\\\\Desktop\\\\LuDmySpin/.claude/skills/*/SKILL.md')",
+      "Read(//c/Program Files/Docker/Docker/resources/**)",
+      "Read(//c/Program Files/**)",
+      "PowerShell(winget --version 2>&1)",
+      "PowerShell(winget search PostgreSQL --id --exact 2>&1)",
+      "Bash(node -e ' *)",
+      "PowerShell(Invoke-RestMethod \"http://localhost:3000/slots\")",
+      "PowerShell(Invoke-RestMethod \"http://localhost:3000/jackpots/classic\")",
+      "PowerShell(Invoke-RestMethod \"http://localhost:3000/jackpots/bonanza\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\claud\\.claude\\projects\\c--Users-claud-Desktop-LuDmySpin\\memory"
+    ]
+  }
+}

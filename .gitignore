@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+*.js.map
+*.d.ts.map
+screenshots/
+api.log
+api.err
+web.log
+*.log
+*.err

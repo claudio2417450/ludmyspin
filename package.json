@@ -1,0 +1,19 @@
+{
+  "name": "ludmyspin",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "simulate": "tsx scripts/simulate.ts",
+    "reconcile": "tsx scripts/reconcile.ts"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.0"
+  }
+}

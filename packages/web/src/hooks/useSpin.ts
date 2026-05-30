@@ -1,0 +1,48 @@
+import { useState, useCallback, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { api } from '../api/client.ts';
+import type { SpinResponse } from '../api/client.ts';
+
+export type SpinPhase = 'idle' | 'spinning' | 'stopped';
+
+const MIN_SPIN_MS = 1800;  // animación mínima visible antes de mostrar resultado
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+export function useSpin(slotId: string, onBalance: (b: number) => void) {
+  const [phase, setPhase]       = useState<SpinPhase>('idle');
+  const [result, setResult]     = useState<SpinResponse | null>(null);
+  const [error, setError]       = useState<string | null>(null);
+  const pendingResult           = useRef<SpinResponse | null>(null);
+
+  const doSpin = useCallback(async (bet: number) => {
+    if (phase !== 'idle') return;
+    setPhase('spinning');
+    setError(null);
+    pendingResult.current = null;
+
+    const idempKey  = uuidv4();
+    const startedAt = Date.now();
+
+    try {
+      const res = await api.spin(slotId, { bet }, idempKey);
+      pendingResult.current = res;
+
+      // Garantizar animación mínima
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_SPIN_MS) await sleep(MIN_SPIN_MS - elapsed);
+
+      // Transición a "stopping": los rodillos se detienen en secuencia
+      setPhase('stopped');
+      setResult(pendingResult.current);
+      onBalance(res.balance);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      setError(msg);
+      setPhase('idle');
+    }
+  }, [slotId, phase, onBalance]);
+
+  const resetToIdle = useCallback(() => setPhase('idle'), []);
+
+  return { phase, result, error, doSpin, resetToIdle };
+}
