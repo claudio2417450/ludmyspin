@@ -52,8 +52,9 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
   // Jackpot en tiempo real (WebSocket)
   const jackpotValue = useJackpotValue(slotId, jackpotSeed);
 
-  const { phase, result, error, doSpin, resetToIdle } = useSpin(slotId, onBalance);
+  const { phase, result, visibleStep, error, doSpin, resetToIdle } = useSpin(slotId, onBalance);
   const isSpinning  = phase === 'spinning';
+  const isCascading = phase === 'cascade';
   const isBusy      = phase !== 'idle';
 
   const freeSpinsLeft  = result?.features.freeSpinsLeft  ?? 0;
@@ -146,7 +147,12 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
       {/* Máquina */}
       <div className="game-main">
         <div className="machine-wrapper">
-          <SlotMachine isSpinning={isSpinning} result={result} slotInfo={selectedSlot} />
+          <SlotMachine
+            isSpinning={isSpinning}
+            result={result}
+            slotInfo={selectedSlot}
+            visibleStep={visibleStep}
+          />
           <WinOverlay
             payout={result?.payout ?? 0}
             currency={result?.currency ?? 'credits'}

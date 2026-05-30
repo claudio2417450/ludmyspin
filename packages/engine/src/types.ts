@@ -80,4 +80,5 @@ export interface FeaturesConfig {
   };
   wilds?: { symbol: string };
   cascades?: boolean;
+  cascadeMultiplier?: boolean;
 }

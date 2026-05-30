@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import { classic, fruits, bonanza } from '@ludmyspin/engine';
+import { classic, fruits, bonanza, harvest } from '@ludmyspin/engine';
 import { db } from './client.js';
 import { users, wallets, slots as slotsTable, jackpots } from './schema.js';
 import { config } from '../config.js';
@@ -26,7 +26,7 @@ async function seed() {
   }
 
   // ── Slots ──────────────────────────────────────────────────────────────────
-  const slotConfigs = [classic, fruits, bonanza];
+  const slotConfigs = [classic, fruits, bonanza, harvest];
   for (const slot of slotConfigs) {
     await db.insert(slotsTable).values({
       id:        slot.id,
@@ -61,6 +61,7 @@ async function seed() {
       classic: { name: 'Grand Jackpot',   seed: 50_000  },
       fruits:  { name: 'Mega Jackpot',    seed: 100_000 },
       bonanza: { name: 'Bonanza Jackpot', seed: 75_000  },
+      harvest: { name: 'Harvest Jackpot', seed: 60_000  },
     };
     const jpConfig = SEEDS[slot.id];
     if (jpConfig) {

@@ -3,11 +3,11 @@
  * Uso: npx tsx scripts/simulate.ts --slot classic --spins 1000000 --bet 100
  */
 import { parseArgs } from 'node:util';
-import { classic, fruits, spin } from '@ludmyspin/engine';
+import { classic, fruits, bonanza, harvest, spin } from '@ludmyspin/engine';
 import type { SlotConfig } from '@ludmyspin/engine';
 import { randomBytes } from 'node:crypto';
 
-const SLOTS: Record<string, SlotConfig> = { classic, fruits };
+const SLOTS: Record<string, SlotConfig> = { classic, fruits, bonanza, harvest };
 
 const { values } = parseArgs({
   options: {

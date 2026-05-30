@@ -1,16 +1,23 @@
 import { generateFloat } from './rng.js';
 import { checkFreeSpinsTrigger } from './features/freeSpins.js';
+import { evaluateGrid, applyCascade } from './features/cascade.js';
 import type { SlotConfig, Seeds, SpinResult, SpinStep, WinLine, Paytable } from './types.js';
+
+const MAX_CASCADE_DEPTH = 5;
 
 /**
  * Función pura del motor: (config, apuesta, semillas) → SpinResult.
- * Soporta wilds (sustituyen cualquier símbolo) y disparo de free spins (scatter).
+ * Soporta wilds, scatter / free spins y cascadas con multiplicador.
  */
 export function spin(config: SlotConfig, bet: number, seeds: Seeds): SpinResult {
   validateBet(config, bet);
+
+  if (config.features.cascades) {
+    return computeCascadeSpin(config, bet, seeds);
+  }
+
   const step = computeStep(config, bet, seeds);
 
-  // Detectar si el giro dispara free spins
   let freeSpinsTriggered = 0;
   if (config.features.freeSpins) {
     freeSpinsTriggered = checkFreeSpinsTrigger(step.grid, config.features.freeSpins);
@@ -28,6 +35,64 @@ export function spin(config: SlotConfig, bet: number, seeds: Seeds): SpinResult 
     },
   };
 }
+
+// ── Cascadas ──────────────────────────────────────────────────────────────────
+
+function computeCascadeSpin(config: SlotConfig, bet: number, seeds: Seeds): SpinResult {
+  const { paylines, paytable, features, reels } = config;
+  const wildSymbol  = features.wilds?.symbol;
+  const useMulti    = features.cascadeMultiplier === true;
+  const strip       = reels[0]; // todas las tiras son iguales en este slot
+  const lineBet     = bet / paylines.length;
+
+  // Paso 0: giro inicial
+  const step0 = computeStep(config, bet, seeds);
+  const allSteps: SpinStep[] = [step0];
+  let totalPayout = step0.payout;
+
+  let currentGrid = step0.grid;
+  let currentWins = step0.winLines;
+  let cascadeDepth = 0;
+
+  while (currentWins.length > 0 && cascadeDepth < MAX_CASCADE_DEPTH) {
+    cascadeDepth++;
+    const multiplier = useMulti ? cascadeDepth + 1 : 1;
+
+    // Aplicar cascada: quitar ganadores, caer nuevos símbolos
+    currentGrid = applyCascade(
+      currentGrid, currentWins, paylines,
+      strip, seeds.serverSeed, seeds.clientSeed, seeds.nonce, cascadeDepth,
+    );
+
+    // Re-evaluar con el multiplicador de este nivel
+    const boostedLineBet = lineBet * multiplier;
+    currentWins = evaluateGrid(currentGrid, paylines, paytable, boostedLineBet, wildSymbol);
+
+    const stepPayout = currentWins.reduce((s, w) => s + w.payout, 0);
+    totalPayout += stepPayout;
+
+    allSteps.push({
+      reelPositions: [],
+      grid:          currentGrid,
+      winLines:      currentWins,
+      payout:        stepPayout,
+    });
+  }
+
+  return {
+    steps:      allSteps,
+    payout:     totalPayout,
+    multiplier: cascadeDepth > 0 ? cascadeDepth + 1 : 1,
+    features: {
+      multiplier:     cascadeDepth > 0 ? cascadeDepth + 1 : 1,
+      freeSpinsLeft:  0,
+      freeSpinsGiven: 0,
+      sessionId:      null,
+    },
+  };
+}
+
+// ── Helpers compartidos ───────────────────────────────────────────────────────
 
 function validateBet(config: SlotConfig, bet: number): void {
   if (!Number.isInteger(bet) || bet < config.minBet || bet > config.maxBet) {
@@ -49,12 +114,7 @@ function computeStep(config: SlotConfig, bet: number, seeds: Seeds): SpinStep {
     return Array.from({ length: numRows }, (_, row) => strip[(pos + row) % strip.length]);
   });
 
-  const winLines: WinLine[] = [];
-  for (const payline of paylines) {
-    const symbols = payline.positions.map((row, ri) => grid[ri][row]);
-    const win = evaluatePayline(payline.id, symbols, paytable, lineBet, wildSymbol);
-    if (win) winLines.push(win);
-  }
+  const winLines = evaluateGrid(grid, paylines, paytable, lineBet, wildSymbol);
 
   return {
     reelPositions,
@@ -62,43 +122,4 @@ function computeStep(config: SlotConfig, bet: number, seeds: Seeds): SpinStep {
     winLines,
     payout: winLines.reduce((sum, w) => sum + w.payout, 0),
   };
-}
-
-/**
- * Evalúa una payline con soporte de wilds.
- * El wild sustituye a cualquier símbolo. Si todas las posiciones son wild,
- * se busca 'wild' directamente en la paytable.
- */
-function evaluatePayline(
-  paylineId: number,
-  symbols: string[],
-  paytable: Paytable,
-  lineBet: number,
-  wildSymbol?: string,
-): WinLine | null {
-  // Símbolo base: el primero que no sea wild (o wild si todos lo son)
-  const base = wildSymbol
-    ? (symbols.find((s) => s !== wildSymbol) ?? wildSymbol)
-    : symbols[0];
-
-  // Contar consecutivos desde la izquierda (wild cuenta como base)
-  let consecutive = 0;
-  for (const s of symbols) {
-    if (s === base || (wildSymbol && s === wildSymbol)) consecutive++;
-    else break;
-  }
-
-  for (let c = consecutive; c >= 1; c--) {
-    const mult = paytable[base]?.[c];
-    if (mult != null) {
-      return {
-        paylineId,
-        symbol:     base,
-        count:      c,
-        multiplier: mult,
-        payout:     Math.round(lineBet * mult),
-      };
-    }
-  }
-  return null;
 }

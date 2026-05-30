@@ -12,32 +12,35 @@ const INITIAL_GRID: string[][] = [
 const STOP_DELAYS = [0, 350, 700];
 
 interface Props {
-  isSpinning: boolean;
-  result:     SpinResponse | null;
-  slotInfo:   SlotInfo | null;
+  isSpinning:   boolean;
+  result:       SpinResponse | null;
+  slotInfo:     SlotInfo | null;
+  /** Paso actual a mostrar (null = último paso del result) */
+  visibleStep?: import('../api/client.ts').SpinStep | null;
 }
 
-export function SlotMachine({ isSpinning, result, slotInfo }: Props) {
-  const grid     = result?.result ?? INITIAL_GRID;
+export function SlotMachine({ isSpinning, result, slotInfo, visibleStep }: Props) {
+  // En cascadas mostramos el grid del paso actual; si no, el grid final
+  const activeStep = visibleStep ?? result?.steps?.[result.steps.length - 1] ?? null;
+  const grid = activeStep?.grid ?? result?.result ?? INITIAL_GRID;
   const numReels = grid.length;
   const paylines = slotInfo?.paylines ?? [{ id: 1, positions: [1, 1, 1] }];
 
   // Para cada giro ganador, mapear paylineId → filas ganadoras por rodillo
   const winRowsByReel = useMemo((): number[][] => {
-    if (!result || isSpinning) return Array.from({ length: numReels }, () => []);
+    if (isSpinning) return Array.from({ length: numReels }, () => []);
     const paylineMap = new Map(paylines.map((p) => [p.id, p.positions]));
     const sets: Set<number>[] = Array.from({ length: numReels }, () => new Set());
-
-    for (const step of result.steps) {
-      for (const win of step.winLines) {
-        const positions = paylineMap.get(win.paylineId);
-        if (positions) {
-          positions.forEach((row, ri) => sets[ri]?.add(row));
-        }
+    // Mostrar wins del paso visible (cascade) o del resultado final
+    const winsToShow = activeStep?.winLines ?? result?.steps?.[result.steps.length - 1]?.winLines ?? [];
+    for (const win of winsToShow) {
+      const positions = paylineMap.get(win.paylineId);
+      if (positions) {
+        positions.forEach((row, ri) => sets[ri]?.add(row));
       }
     }
     return sets.map((s) => [...s]);
-  }, [result, isSpinning, numReels, paylines]);
+  }, [activeStep, result, isSpinning, numReels, paylines]);
 
   // IDs de paylines que ganaron (para los indicadores)
   const winPaylineIds = useMemo((): Set<number> => {
