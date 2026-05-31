@@ -1,3 +1,9 @@
+/**
+ * Para usar tus propias imágenes:
+ * 1. Creá packages/web/public/themes/mi-tema/symbols/ con PNG de cada símbolo
+ * 2. Cambiá ACTIVE_THEME a 'mi-tema'
+ * 3. Vite recarga solo — no hace falta reiniciar nada
+ */
 const ACTIVE_THEME = 'placeholder';
 
 /** Cada símbolo del motor tiene un emoji y un color de fondo para el tema placeholder. */
