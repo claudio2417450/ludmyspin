@@ -1,22 +1,11 @@
 # LuDmySpin — Railway deployment config
-# Dos servicios: API (Node.js) + Web (static build)
 # Docs: https://docs.railway.app/reference/config-as-code
 
 [build]
 builder = "NIXPACKS"
 
-# ── Servicio API ──────────────────────────────────────────────────────────────
-# Variables requeridas en Railway → Settings → Variables:
-#   DATABASE_URL    (inyectada por el plugin PostgreSQL de Railway)
-#   REDIS_URL       (inyectada por el plugin Redis de Railway)
-#   JWT_SECRET      (valor largo y aleatorio)
-#   OWNER_USERNAME  (nombre del usuario owner inicial)
-#   OWNER_PASSWORD  (contraseña temporal del owner)
-#   CURRENCY        (ej: ARS  o  credits)
-#   NODE_ENV        production
-
 [deploy]
-startCommand = "node --import=tsx/esm packages/api/src/index.ts"
+startCommand = "npx tsx packages/api/src/index.ts"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
