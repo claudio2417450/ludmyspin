@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "build": "echo 'Deploy: no TypeScript compilation needed'",
     "simulate": "tsx scripts/simulate.ts",
     "reconcile": "tsx scripts/reconcile.ts"
   },
