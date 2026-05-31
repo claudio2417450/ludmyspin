@@ -1,5 +1,5 @@
-# Configuración de Nixpacks para Railway (API)
-# El servicio web se despliega por separado como Static Site o segundo servicio.
+# Configuración de Nixpacks para Railway
+# tsx ejecuta TypeScript directamente — no hace falta compilar previamente.
 
 [phases.setup]
 nixPkgs = ["nodejs_20"]
@@ -8,8 +8,7 @@ nixPkgs = ["nodejs_20"]
 cmds = ["npm ci"]
 
 [phases.build]
-# Sin build previo: tsx ejecuta TypeScript directamente en runtime.
-# Para producción real, compilar con tsc y usar node dist/
+cmds = []   # sin build: tsx transpila en runtime
 
 [start]
 cmd = "npx tsx packages/api/src/index.ts"
