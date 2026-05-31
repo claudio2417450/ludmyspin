@@ -5,10 +5,10 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci --include=dev"]
 
 [phases.build]
-cmds = []   # sin build: tsx transpila en runtime
+cmds = ["echo 'No build needed - tsx transpiles at runtime'"]
 
 [start]
 cmd = "npx tsx packages/api/src/index.ts"
