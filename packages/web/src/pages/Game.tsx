@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { SlotMachine }       from '../components/SlotMachine.tsx';
 import { BetControls }       from '../components/BetControls.tsx';
 import { WinOverlay }        from '../components/WinOverlay.tsx';
@@ -7,6 +7,7 @@ import { WithdrawalModal }   from '../components/WithdrawalModal.tsx';
 import { FreeSpinsCounter }  from '../components/FreeSpinsCounter.tsx';
 import { useJackpotValue }   from '../components/JackpotDisplay.tsx';
 import { useSpin }           from '../hooks/useSpin.ts';
+import { sfx }               from '../hooks/useSound.ts';
 import { api }               from '../api/client.ts';
 import type { SlotInfo }     from '../api/client.ts';
 
@@ -56,9 +57,34 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
   const isSpinning  = phase === 'spinning';
   const isCascading = phase === 'cascade';
   const isBusy      = phase !== 'idle';
+  const prevPhase   = useRef<typeof phase>('idle');
 
   const freeSpinsLeft  = result?.features.freeSpinsLeft  ?? 0;
   const freeSpinsGiven = result?.features.freeSpinsGiven ?? 0;
+
+  // ── Sonidos ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (phase === 'spinning' && prevPhase.current === 'idle') {
+      sfx.spin();                         // empieza a girar
+    }
+    if (phase === 'stopped' && prevPhase.current !== 'stopped') {
+      // stop secuencial de rodillos
+      [0, 350, 700].forEach((delay, i) =>
+        setTimeout(() => sfx.reelStop(i), delay),
+      );
+      // sonido de resultado 300ms después del último rodillo
+      setTimeout(() => {
+        const payout = result?.payout ?? 0;
+        const isJp   = result?.jackpot?.won === true;
+        const isFree = (result?.features.freeSpinsGiven ?? 0) > 0;
+        if (isJp)            sfx.jackpot();
+        else if (isFree)     sfx.freeSpins();
+        else if (payout >= (bet * 10)) sfx.bigWin();
+        else if (payout > 0) sfx.smallWin();
+      }, 800);
+    }
+    prevPhase.current = phase;
+  }, [phase, result, bet]);
 
   // Clampear apuesta al rango del slot
   useEffect(() => {
