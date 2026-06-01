@@ -56,18 +56,28 @@ export async function consumeFreeSpinAndUpdate(
   sessionId: string,
   payout: number,
 ): Promise<number> {
-  const [row] = await tx.execute<{ state: { remaining: number; totalPayout: number } }>(
-    sql`UPDATE game_sessions
-        SET state = jsonb_set(
-              jsonb_set(state, '{remaining}', ((state->>'remaining')::int - 1)::text::jsonb),
-              '{totalPayout}', ((state->>'totalPayout')::int + ${payout})::text::jsonb
-            ),
-            status = CASE WHEN (state->>'remaining')::int <= 1 THEN 'finished' ELSE 'active' END,
-            updated_at = now()
-        WHERE id = ${sessionId}::uuid
-        RETURNING state`,
+  // Leer el estado actual primero para construir el nuevo estado en JS
+  // (más robusto que manipular JSONB en SQL — evita NULL si el estado es malformado)
+  const current = await tx.execute<{ remaining: number; totalPayout: number }>(
+    sql`SELECT (state->>'remaining')::int AS remaining,
+               (state->>'totalPayout')::int AS "totalPayout"
+        FROM game_sessions
+        WHERE id = ${sessionId}::uuid`,
   );
 
-  const newRemaining = Math.max(0, (row.state?.remaining ?? 1) - 1);
-  return newRemaining;
+  const prev       = current[0];
+  const remaining  = Math.max(0, (prev?.remaining ?? 1) - 1);
+  const totalPaid  = (prev?.totalPayout ?? 0) + payout;
+  const newState   = JSON.stringify({ remaining, totalPayout: totalPaid });
+  const newStatus  = remaining <= 0 ? 'finished' : 'active';
+
+  await tx.execute(sql`
+    UPDATE game_sessions
+    SET state      = ${newState}::jsonb,
+        status     = ${newStatus},
+        updated_at = now()
+    WHERE id = ${sessionId}::uuid
+  `);
+
+  return remaining;
 }
