@@ -2,42 +2,54 @@ import { useState } from 'react';
 import { useAuth } from './hooks/useAuth.ts';
 import { Login }          from './pages/Login.tsx';
 import { ChangePassword } from './pages/ChangePassword.tsx';
+import { Lobby }          from './pages/Lobby.tsx';
 import { Game }           from './pages/Game.tsx';
 import { AdminApp }       from './admin/AdminApp.tsx';
 
-type View = 'game' | 'admin';
+type View = 'lobby' | 'game' | 'admin';
 
 export default function App() {
   const { auth, login, logout, afterPasswordChange, updateBalance } = useAuth();
-  const [view, setView] = useState<View>('game');
+  const [view, setView]           = useState<View>('lobby');
+  const [activeSlotId, setActiveSlotId] = useState<string | null>(null);
 
-  if (!auth.token) {
-    return <Login onLogin={login} />;
-  }
-
-  if (auth.mustChangePassword) {
-    return <ChangePassword onDone={afterPasswordChange} />;
-  }
+  if (!auth.token) return <Login onLogin={login} />;
+  if (auth.mustChangePassword) return <ChangePassword onDone={afterPasswordChange} />;
 
   const isStaff = auth.role === 'admin' || auth.role === 'owner';
+  const uname   = localStorage.getItem('username') ?? auth.role ?? 'jugador';
 
-  // Staff que eligió ver el panel
   if (isStaff && view === 'admin') {
     return (
       <AdminApp
         role={auth.role as 'admin' | 'owner'}
-        username={localStorage.getItem('username') ?? auth.role ?? 'admin'}
+        username={uname}
         onLogout={logout}
-        onPlayGame={() => setView('game')}
+        onPlayGame={() => setView('lobby')}
       />
     );
   }
 
+  if (view === 'game' && activeSlotId) {
+    return (
+      <Game
+        initialSlotId={activeSlotId}
+        balance={auth.balance}
+        username={uname}
+        onBalance={updateBalance}
+        onLogout={logout}
+        onLobby={() => setView('lobby')}
+        onAdminPanel={isStaff ? () => setView('admin') : undefined}
+      />
+    );
+  }
+
+  // Lobby por defecto
   return (
-    <Game
+    <Lobby
       balance={auth.balance}
-      username={localStorage.getItem('username') ?? 'jugador'}
-      onBalance={updateBalance}
+      username={uname}
+      onSelectSlot={(slotId) => { setActiveSlotId(slotId); setView('game'); }}
       onLogout={logout}
       onAdminPanel={isStaff ? () => setView('admin') : undefined}
     />

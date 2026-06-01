@@ -15,14 +15,16 @@ const WIN_DISPLAY_MS = 2500;
 const INITIAL_BET    = 100;
 
 interface Props {
-  balance:       number;
-  username:      string;
-  onBalance:     (b: number) => void;
-  onLogout:      () => void;
-  onAdminPanel?: () => void;
+  initialSlotId?: string;
+  balance:        number;
+  username:       string;
+  onBalance:      (b: number) => void;
+  onLogout:       () => void;
+  onLobby?:       () => void;
+  onAdminPanel?:  () => void;
 }
 
-export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: Props) {
+export function Game({ initialSlotId, balance, username, onBalance, onLogout, onLobby, onAdminPanel }: Props) {
   const [slots, setSlots]               = useState<SlotInfo[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [bet, setBet]                   = useState(INITIAL_BET);
@@ -33,9 +35,13 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
   useEffect(() => {
     api.getSlots().then((r) => {
       setSlots(r.slots);
-      if (r.slots.length > 0) setSelectedSlot(r.slots[0]);
+      // Preseleccionar el slot que viene del lobby (o el primero)
+      const initial = initialSlotId
+        ? r.slots.find(s => s.id === initialSlotId) ?? r.slots[0]
+        : r.slots[0];
+      if (initial) setSelectedSlot(initial);
     }).catch(() => {});
-  }, []);
+  }, [initialSlotId]);
 
   useEffect(() => {
     if (!selectedSlot) return;
@@ -111,6 +117,9 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
             <span className="game-header__jackpot">🏆 {jackpotValue.toLocaleString('es')}</span>
           )}
           <span className="game-header__user">👤 {username}</span>
+          {onLobby && (
+            <button className="game-header__btn" onClick={onLobby} title="Volver al lobby">🏠</button>
+          )}
           {onAdminPanel && (
             <button className="game-header__btn" onClick={onAdminPanel}>Admin</button>
           )}
