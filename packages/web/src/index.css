@@ -94,60 +94,67 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   box-shadow: 0 0 16px var(--accent-glow);
 }
 
-/* ── Game screen ─────────────────────────────────────────────────────────── */
+/* ── Game screen — SIN scroll en móvil ──────────────────────────────────── */
 .game-screen {
-  min-height: 100vh;
+  height: 100dvh;           /* viewport dinámico (respeta barra del browser) */
+  max-height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: radial-gradient(ellipse at 50% 0%, #1e1040 0%, var(--bg) 70%);
-  padding-bottom: 2rem;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+/* ── Header compacto ─────────────────────────────────────────────────────── */
 .game-header {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: .9rem 1.5rem;
+  padding: .45rem 1rem;
   background: var(--surface);
   border-bottom: 1px solid #2d2d50;
+  flex-shrink: 0;
 }
-.game-header__title { font-size: 1.3rem; font-weight: 800; color: var(--gold); letter-spacing: .04em; }
-.game-header__right { display: flex; align-items: center; gap: 1rem; }
-.game-header__user  { font-size: .85rem; color: var(--text-dim); }
-.game-header__logout {
-  background: transparent;
-  color: var(--text-dim);
-  font-size: .8rem;
-  border: 1px solid #3d3d60;
-  border-radius: 6px;
-  padding: .3rem .75rem;
-  transition: color .15s, border-color .15s;
+.game-header__title   { font-size: 1.05rem; font-weight: 800; color: var(--gold); }
+.game-header__right   { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+.game-header__user    { font-size: .75rem; color: var(--text-dim); }
+.game-header__jackpot { font-size: .75rem; font-weight: 700; color: var(--gold); }
+.game-header__btn {
+  background: transparent; color: var(--text-dim);
+  font-size: .72rem; border: 1px solid #3d3d60; border-radius: 5px;
+  padding: .2rem .55rem; transition: color .15s, border-color .15s;
 }
-.game-header__logout:hover { color: var(--text); border-color: var(--text-dim); }
+.game-header__btn:hover { color: var(--text); border-color: var(--text-dim); }
 
-/* ── Balance bar ──────────────────────────────────────────────────────────── */
+/* ── Balance bar compacta ────────────────────────────────────────────────── */
 .balance-bar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  margin: 1.25rem 0 .5rem;
+  justify-content: center;
+  gap: .5rem;
+  padding: .3rem 1rem;
+  flex-shrink: 0;
 }
-.balance-bar__label  { font-size: .7rem; letter-spacing: .1em; color: var(--text-dim); }
-.balance-bar__amount { font-size: 2rem; font-weight: 800; color: var(--gold); letter-spacing: .02em; }
+.balance-bar__label  { font-size: .65rem; letter-spacing: .1em; color: var(--text-dim); }
+.balance-bar__amount { font-size: 1.4rem; font-weight: 800; color: var(--gold); }
 
-/* ── Game main ───────────────────────────────────────────────────────────── */
+/* ── Game main — ocupa el espacio restante ───────────────────────────────── */
 .game-main {
+  flex: 1;                 /* toma todo el espacio entre balance y controles */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .75rem;
+  justify-content: center;
+  gap: .4rem;
   position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 0;           /* necesario para que flex-child no desborde */
 }
 
-.machine-wrapper { position: relative; }
+.machine-wrapper { position: relative; flex-shrink: 0; }
 
 /* ── Slot machine ────────────────────────────────────────────────────────── */
 .slot-machine {
@@ -541,12 +548,59 @@ kbd {
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 420px) {
-  .symbol { width: 72px; height: 72px; }
-  .symbol__emoji { font-size: 2.2rem; }
-  .bet-amount { font-size: 1.3rem; }
-  .spin-btn { width: 140px; }
+/* ── Responsive móvil ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Symbols más chicos para que el grid 3×3 quepa sin scroll */
+  .symbol           { width: 22vw; height: 22vw; max-width: 88px; max-height: 88px; }
+  .symbol__emoji    { font-size: min(2.4rem, 7vw); }
+
+  .slot-machine     { padding: .5rem; }
+  .slot-machine__window { padding: .3rem; }
+  .slot-machine__reels  { gap: .25rem; }
+  .reel             { gap: .25rem; }
+
+  /* Bet controls más compactos */
+  .bet-controls     { gap: .5rem; margin-top: .25rem; }
+  .bet-controls__row { gap: .6rem; }
+  .bet-display      { min-width: 80px; }
+  .bet-amount       { font-size: 1.2rem; }
+  .bet-btn          { width: 38px; height: 38px; }
+  .spin-btn         { width: 140px; height: 46px; font-size: 1.1rem; }
+
+  /* Balance row compacto */
+  .balance-bar__amount { font-size: 1.2rem; }
+
+  /* Slot selector más pequeño */
+  .slot-tab         { padding: .25rem .6rem; font-size: .72rem; }
+  .slot-tab__badge  { font-size: .6rem; }
+
+  /* Ocultar hint de teclado en móvil */
+  .keyboard-hint    { display: none; }
+
+  /* Last result más compacto */
+  .last-result      { font-size: .85rem; }
+
+  /* WinsFeed flotante en esquina — no ocupa espacio vertical */
+  .wins-feed {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    max-height: 80px;
+    border-radius: 0;
+    z-index: 50;
+    margin: 0;
+  }
+  .wins-feed__list  { max-height: 60px; }
+}
+
+/* Landscape móvil — más espacio horizontal */
+@media (max-height: 500px) and (orientation: landscape) {
+  .game-header   { padding: .25rem .75rem; }
+  .balance-bar   { padding: .15rem .75rem; }
+  .slot-selector { margin: 0; }
+  .symbol        { width: 18vh; height: 18vh; max-width: 70px; max-height: 70px; }
+  .symbol__emoji { font-size: min(2rem, 6vh); }
+  .bet-controls  { margin-top: .1rem; gap: .3rem; }
+  .spin-btn      { height: 40px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
