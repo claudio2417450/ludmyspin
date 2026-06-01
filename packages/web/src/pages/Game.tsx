@@ -154,18 +154,23 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
           />
         </div>
 
-        {(freeSpinsLeft > 0 || freeSpinsGiven > 0) && (
-          <FreeSpinsCounter freeSpinsLeft={freeSpinsLeft} freeSpinsGiven={freeSpinsGiven} />
-        )}
-
-        {result && !isSpinning && !showWin && freeSpinsLeft === 0 && (
-          <div className="last-result">
-            {result.payout > 0
-              ? <span className="last-result--win">+{result.payout.toLocaleString('es')}</span>
-              : <span className="last-result--lose">Sin premio</span>
-            }
-          </div>
-        )}
+        {/* FreeSpins — altura fija para no mover la máquina */}
+        <div className="result-row">
+          {(freeSpinsLeft > 0 || freeSpinsGiven > 0)
+            ? <FreeSpinsCounter freeSpinsLeft={freeSpinsLeft} freeSpinsGiven={freeSpinsGiven} />
+            : (
+              /* last-result siempre en DOM con visibility para evitar layout shift */
+              <div
+                className="last-result"
+                style={{ visibility: (result && !isSpinning && !showWin) ? 'visible' : 'hidden' }}
+              >
+                {result && result.payout > 0
+                  ? <span className="last-result--win">+{result.payout.toLocaleString('es')}</span>
+                  : <span className="last-result--lose">Sin premio</span>
+                }
+              </div>
+          )}
+        </div>
 
         {error && <p className="game-error">{error}</p>}
       </div>

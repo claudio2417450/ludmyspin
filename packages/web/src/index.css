@@ -158,12 +158,13 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 
 .machine-wrapper { position: relative; flex-shrink: 0; }
 
-/* ── Slot machine ────────────────────────────────────────────────────────── */
+/* ── Slot machine — extendida +10% arriba y abajo ───────────────────────── */
 .slot-machine {
   background: var(--surface);
   border: 3px solid var(--gold-dim);
   border-radius: 16px;
-  padding: 1rem;
+  /* padding vertical = 10% del tamaño de un símbolo (≈88px * 0.1 = ~9px) + 1rem base */
+  padding: calc(1rem + 9px) 1rem;
   box-shadow:
     0 0 0 1px #0d0d1a,
     0 0 30px rgba(240,192,64,.12),
@@ -296,8 +297,17 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   to   { transform: scale(1);  opacity: 1; }
 }
 
+/* ── Result row — altura FIJA para que la máquina no se mueva ───────────── */
+.result-row {
+  height: 1.8rem;   /* siempre ocupa este espacio, sin importar el contenido */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 /* ── Last result ─────────────────────────────────────────────────────────── */
-.last-result       { font-size: 1rem; font-weight: 600; min-height: 1.5rem; }
+.last-result       { font-size: 1rem; font-weight: 600; }
 .last-result--win  { color: var(--win); }
 .last-result--lose { color: var(--lose); }
 
@@ -563,7 +573,8 @@ kbd {
   .symbol           { width: min(27vw, 21vh); height: min(27vw, 21vh); }
   .symbol__emoji    { font-size: min(3rem, 9vw, 7vh); }
 
-  .slot-machine     { padding: .5rem; }
+  /* 10% del símbolo ≈ 2.7vw extra arriba y abajo */
+  .slot-machine     { padding: calc(.5rem + 2.7vw) .5rem; }
   .slot-machine__window { padding: .4rem; }
   .slot-machine__reels  { gap: .3rem; }
   .reel             { gap: .3rem; }
