@@ -21,8 +21,10 @@
 
 html, body, #root {
   height: 100%;
+  max-height: 100%;
   background: var(--bg);
-  overflow-x: hidden;
+  overflow: hidden;   /* nunca scroll en el documento raíz */
+  touch-action: manipulation;
 }
 
 button { cursor: pointer; border: none; font-family: inherit; }
@@ -94,10 +96,10 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   box-shadow: 0 0 16px var(--accent-glow);
 }
 
-/* ── Game screen — SIN scroll en móvil ──────────────────────────────────── */
+/* ── Game screen — SIN scroll, fijado al viewport ───────────────────────── */
 .game-screen {
-  height: 100dvh;           /* viewport dinámico (respeta barra del browser) */
-  max-height: 100dvh;
+  position: fixed;          /* fija al viewport — el método más robusto */
+  inset: 0;                 /* top:0 right:0 bottom:0 left:0 */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -312,6 +314,8 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  flex-shrink: 0;
+  padding-bottom: max(env(safe-area-inset-bottom), 1rem);  /* respeta notch iPhone */
 }
 
 .bet-controls__row {
@@ -550,46 +554,53 @@ kbd {
 
 /* ── Responsive móvil ────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  /* Symbols más chicos para que el grid 3×3 quepa sin scroll */
-  .symbol           { width: 22vw; height: 22vw; max-width: 88px; max-height: 88px; }
-  .symbol__emoji    { font-size: min(2.4rem, 7vw); }
+  /* ── Símbolos: usan el espacio disponible en ALTO y ANCHO ─────────────────
+     min(27vw, 21vh) elige el menor:
+       - 27vw = 1/3 del ancho de pantalla (menos gaps)
+       - 21vh = 1/3 del alto disponible después de header/balance/tabs/controls
+     Resultado: llena el espacio sin overflow.
+  ──────────────────────────────────────────────────────────────────────── */
+  .symbol           { width: min(27vw, 21vh); height: min(27vw, 21vh); }
+  .symbol__emoji    { font-size: min(3rem, 9vw, 7vh); }
 
   .slot-machine     { padding: .5rem; }
-  .slot-machine__window { padding: .3rem; }
-  .slot-machine__reels  { gap: .25rem; }
-  .reel             { gap: .25rem; }
+  .slot-machine__window { padding: .4rem; }
+  .slot-machine__reels  { gap: .3rem; }
+  .reel             { gap: .3rem; }
 
-  /* Bet controls más compactos */
-  .bet-controls     { gap: .5rem; margin-top: .25rem; }
-  .bet-controls__row { gap: .6rem; }
+  /* game-main: centrar verticalmente en el espacio libre */
+  .game-main        { justify-content: center; padding: .25rem 0; }
+
+  /* Bet controls con espacio para la barra de navegación de Android/iOS */
+  .bet-controls     {
+    gap: .6rem;
+    margin-top: .5rem;
+    /* safe-area-inset-bottom = 0 en Android, ~34px en iPhone con notch */
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 14px);
+  }
+  .bet-controls__row { gap: .75rem; }
   .bet-display      { min-width: 80px; }
-  .bet-amount       { font-size: 1.2rem; }
-  .bet-btn          { width: 38px; height: 38px; }
-  .spin-btn         { width: 140px; height: 46px; font-size: 1.1rem; }
+  .bet-amount       { font-size: 1.3rem; }
+  .bet-btn          { width: 40px; height: 40px; }
+  .spin-btn         { width: 160px; height: 50px; font-size: 1.15rem; margin-bottom: .25rem; }
 
-  /* Balance row compacto */
-  .balance-bar__amount { font-size: 1.2rem; }
+  /* Balance compacto */
+  .balance-bar__amount { font-size: 1.3rem; }
 
   /* Slot selector más pequeño */
-  .slot-tab         { padding: .25rem .6rem; font-size: .72rem; }
-  .slot-tab__badge  { font-size: .6rem; }
+  .slot-tab         { padding: .3rem .65rem; font-size: .74rem; }
+  .slot-tab__badge  { font-size: .62rem; }
 
-  /* Ocultar hint de teclado en móvil */
+  /* Ocultar hint de teclado */
   .keyboard-hint    { display: none; }
 
-  /* Last result más compacto */
-  .last-result      { font-size: .85rem; }
+  .last-result      { font-size: .88rem; min-height: 1.2rem; }
+}
 
-  /* WinsFeed flotante en esquina — no ocupa espacio vertical */
-  .wins-feed {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    max-height: 80px;
-    border-radius: 0;
-    z-index: 50;
-    margin: 0;
-  }
-  .wins-feed__list  { max-height: 60px; }
+/* PWA standalone: sin barra del browser, aprovechar el espacio extra */
+@media (display-mode: standalone) {
+  .game-screen { padding-top: env(safe-area-inset-top, 0); }
+  .bet-controls { padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px); }
 }
 
 /* Landscape móvil — más espacio horizontal */

@@ -181,8 +181,7 @@ export function Game({ balance, username, onBalance, onLogout, onAdminPanel }: P
         isFreeSpinRound={freeSpinsLeft > 0}
       />
 
-      {/* ── Feed en tiempo real (ticker flotante) ───────────────────────── */}
-      <WinsFeed />
+      {/* WinsFeed removido del juego — solo visible en panel de admin */}
 
       {showWithdraw && (
         <WithdrawalModal balance={balance} onClose={() => setShowWithdraw(false)} onDone={() => {}} />
