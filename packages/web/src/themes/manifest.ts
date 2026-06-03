@@ -4,7 +4,7 @@
  * 2. Cambiá ACTIVE_THEME a 'mi-tema'
  * 3. Vite recarga solo — no hace falta reiniciar nada
  */
-const ACTIVE_THEME = 'placeholder';
+const ACTIVE_THEME = 'mi-tema';
 
 /** Cada símbolo del motor tiene un emoji y un color de fondo para el tema placeholder. */
 export const SYMBOL_META: Record<string, { emoji: string; bg: string; label: string }> = {

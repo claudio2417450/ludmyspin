@@ -13,10 +13,13 @@
       "Bash(node -e ' *)",
       "PowerShell(Invoke-RestMethod \"http://localhost:3000/slots\")",
       "PowerShell(Invoke-RestMethod \"http://localhost:3000/jackpots/classic\")",
-      "PowerShell(Invoke-RestMethod \"http://localhost:3000/jackpots/bonanza\")"
+      "PowerShell(Invoke-RestMethod \"http://localhost:3000/jackpots/bonanza\")",
+      "Read(//c/Users/claud/AppData/Roaming/npm/**)",
+      "Read(//c/Users/claud/.railway/**)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\claud\\.claude\\projects\\c--Users-claud-Desktop-LuDmySpin\\memory"
+      "c:\\Users\\claud\\.claude\\projects\\c--Users-claud-Desktop-LuDmySpin\\memory",
+      "c:\\Users\\claud\\.railway"
     ]
   }
 }

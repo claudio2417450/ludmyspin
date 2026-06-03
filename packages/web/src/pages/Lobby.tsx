@@ -15,7 +15,7 @@ function fmtBet(n: number) { return n.toLocaleString('es'); }
 
 // Icono por slot
 const SLOT_ICONS: Record<string, string> = {
-  classic: '🍒', fruits: '🍋', bonanza: '⭐', harvest: '🌾',
+  classic: '🍒', fruits: '🍋', bonanza: '⭐', harvest: '🌾', worldcup: '🏆',
 };
 
 interface Props {

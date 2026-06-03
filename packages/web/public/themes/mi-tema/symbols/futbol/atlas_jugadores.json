@@ -1,0 +1,302 @@
+{
+  "sprite_w": 160,
+  "sprite_h": 280,
+  "cols": 8,
+  "rows": 7,
+  "sprites": {
+    "alemania musiala": {
+      "x": 0,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "arabia saudita al dawsari": {
+      "x": 160,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "argelia mahrez": {
+      "x": 320,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "argentina messi": {
+      "x": 480,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "austria alaba": {
+      "x": 640,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "belgica De Bruyne": {
+      "x": 800,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "bosnia dzeko": {
+      "x": 960,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "brasil neymar": {
+      "x": 1120,
+      "y": 0,
+      "w": 160,
+      "h": 280
+    },
+    "cabo verde mendes": {
+      "x": 0,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "canada davies": {
+      "x": 160,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "colombia diaz": {
+      "x": 320,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "copa2026": {
+      "x": 480,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "corea del sur heung min": {
+      "x": 640,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "costa de marfil adingra": {
+      "x": 800,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "croacia modric": {
+      "x": 960,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "curazao Bacuna": {
+      "x": 1120,
+      "y": 280,
+      "w": 160,
+      "h": 280
+    },
+    "ecuador caicedo": {
+      "x": 0,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "egipto salah": {
+      "x": 160,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "escocia robertson": {
+      "x": 320,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "españa yamel": {
+      "x": 480,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "estados unidos pulisic": {
+      "x": 640,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "francia mbappe": {
+      "x": 800,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "ghana kudus": {
+      "x": 960,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "haiti Nazon": {
+      "x": 1120,
+      "y": 560,
+      "w": 160,
+      "h": 280
+    },
+    "inglaterra Bellingham": {
+      "x": 0,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "irak hussein": {
+      "x": 160,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "iran taremi": {
+      "x": 320,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "japon mitoma": {
+      "x": 480,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "jordania tamari": {
+      "x": 640,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "marruecos Hakimi": {
+      "x": 800,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "mexico gimenez": {
+      "x": 960,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "nigeria osimhen": {
+      "x": 1120,
+      "y": 840,
+      "w": 160,
+      "h": 280
+    },
+    "noruega Haaland": {
+      "x": 0,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "nueva zelanda wood": {
+      "x": 160,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "paises bajos van Dijk": {
+      "x": 320,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "panama carrasquilla": {
+      "x": 480,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "paraguay enciso": {
+      "x": 640,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "portugal ronaldo": {
+      "x": 800,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "qatar afif": {
+      "x": 960,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "rep de congo wissa": {
+      "x": 1120,
+      "y": 1120,
+      "w": 160,
+      "h": 280
+    },
+    "republica checa schick": {
+      "x": 0,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "senegal Mane": {
+      "x": 160,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "sudafrica tau": {
+      "x": 320,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "suecia isak": {
+      "x": 480,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "suiza Xhaka": {
+      "x": 640,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "tunez skhiri": {
+      "x": 800,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "turquia guler": {
+      "x": 960,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "uruguay valverde": {
+      "x": 1120,
+      "y": 1400,
+      "w": 160,
+      "h": 280
+    },
+    "uzbekistan shomurodov": {
+      "x": 0,
+      "y": 1680,
+      "w": 160,
+      "h": 280
+    }
+  }
+}

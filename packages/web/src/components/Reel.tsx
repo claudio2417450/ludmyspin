@@ -1,36 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Symbol } from './Symbol.tsx';
 import { ALL_SYMBOLS } from '../themes/manifest.ts';
 
 interface Props {
-  /** Símbolos finales a mostrar una vez que el rodillo se detenga. */
   finalSymbols: string[];
   isSpinning:   boolean;
-  /** Milisegundos de retraso después de que isSpinning=false para detener este rodillo. */
   stopDelay:    number;
-  /** Filas con premio (para highlight). Solo aplica cuando el rodillo ya se detuvo. */
   winRows:      number[];
+  /** Símbolos posibles para ciclar durante el spinning (default: frutas) */
+  allSymbols?:  string[];
 }
 
-function randSymbol() {
-  return ALL_SYMBOLS[Math.floor(Math.random() * ALL_SYMBOLS.length)];
-}
+export function Reel({ finalSymbols, isSpinning, stopDelay, winRows, allSymbols }: Props) {
+  const symbols = allSymbols && allSymbols.length > 0 ? allSymbols : ALL_SYMBOLS;
 
-export function Reel({ finalSymbols, isSpinning, stopDelay, winRows }: Props) {
+  const randSymbol = useCallback(() =>
+    symbols[Math.floor(Math.random() * symbols.length)],
+    [symbols],
+  );
+
   const [shown, setShown]     = useState<string[]>(finalSymbols);
   const [resting, setResting] = useState(true);
 
   useEffect(() => {
     if (isSpinning) {
       setResting(false);
-      // Ciclar símbolos aleatoriamente mientras gira
       const id = setInterval(() => {
         setShown([randSymbol(), randSymbol(), randSymbol()]);
       }, 80);
       return () => clearInterval(id);
     }
-
-    // Cuando para: esperar stopDelay y mostrar el resultado final
     const id = setTimeout(() => {
       setShown(finalSymbols);
       setResting(true);
@@ -39,7 +38,6 @@ export function Reel({ finalSymbols, isSpinning, stopDelay, winRows }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSpinning]);
 
-  // Sincronizar finalSymbols si cambia mientras el rodillo ya está parado
   useEffect(() => {
     if (resting) setShown(finalSymbols);
     // eslint-disable-next-line react-hooks/exhaustive-deps

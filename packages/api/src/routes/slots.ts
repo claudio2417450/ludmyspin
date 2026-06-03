@@ -13,10 +13,22 @@ export const slotsRoutes: FastifyPluginAsync = async (fastify) => {
       name:     slots.name,
       numRows:  slots.numRows,
       paylines: slots.paylines,
+      paytable: slots.paytable,   // incluido para derivar símbolos en el frontend
+      reels:    slots.reels,       // necesario para initial grid y ciclo de spin
       minBet:   slots.minBet,
       maxBet:   slots.maxBet,
     }).from(slots).where(eq(slots.enabled, true));
-    return reply.send({ slots: rows });
+
+    // Derivar la lista de símbolos únicos de la paytable (más las keys del wild si aplica)
+    const slotsWithSymbols = rows.map(row => {
+      const paytable  = row.paytable as Record<string, unknown>;
+      const reels     = row.reels as string[][];
+      // Símbolos únicos del primer rodillo (representa todos los posibles)
+      const symbols   = [...new Set(reels[0] ?? [])];
+      return { ...row, symbols, reels: undefined, paytable: undefined };
+    });
+
+    return reply.send({ slots: slotsWithSymbols });
   });
 
   // GET /slots/:id/config — configuración completa (para el motor y la UI)

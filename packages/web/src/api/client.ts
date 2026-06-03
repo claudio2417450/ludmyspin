@@ -103,6 +103,8 @@ export interface SlotInfo {
   paylines: Array<{ id: number; positions: number[] }>;
   minBet:   number;
   maxBet:   number;
+  /** Símbolos únicos del slot (para cycling durante spin e initial grid) */
+  symbols?: string[];
 }
 
 export interface SlotConfig extends SlotInfo {
