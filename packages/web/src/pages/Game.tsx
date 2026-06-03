@@ -75,6 +75,7 @@ export function Game({ initialSlotId, balance, username, onBalance, onLogout, on
   useEffect(() => {
     if (phase === 'spinning' && prevPhase.current === 'idle') sfx.spin(slotId);
     if (phase === 'stopped' && prevPhase.current !== 'stopped') {
+      sfx.stopSpin();   // detener spin.wav inmediatamente
       [0, 350, 700].forEach((delay, i) => setTimeout(() => sfx.reelStop(i, slotId), delay));
       setTimeout(() => {
         const payout = result?.payout ?? 0;

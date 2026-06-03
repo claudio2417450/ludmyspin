@@ -33,6 +33,9 @@ function tone(freq: number, duration: number, type: OscillatorType = 'square', v
 
 const audioCache = new Map<string, HTMLAudioElement>();
 
+/** Referencia al audio de spin activo para poder pararlo */
+let spinAudio: HTMLAudioElement | null = null;
+
 function playWav(file: string, volume = 1) {
   try {
     let audio = audioCache.get(file);
@@ -43,7 +46,27 @@ function playWav(file: string, volume = 1) {
     const clone = audio.cloneNode() as HTMLAudioElement;
     clone.volume = volume;
     clone.play().catch(() => {});
-  } catch { /* ignore */ }
+    return clone;
+  } catch { return null; }
+}
+
+/** Para el sonido de spin gradualmente */
+function stopSpin() {
+  if (!spinAudio) return;
+  const a = spinAudio;
+  spinAudio = null;
+  // Fade out rápido (300ms)
+  const start  = a.volume;
+  const steps  = 10;
+  const interval = setInterval(() => {
+    if (a.volume > start / steps) {
+      a.volume = Math.max(0, a.volume - start / steps);
+    } else {
+      a.pause();
+      a.currentTime = 0;
+      clearInterval(interval);
+    }
+  }, 30);
 }
 
 // ── Interfaz pública ──────────────────────────────────────────────────────
@@ -51,12 +74,18 @@ function playWav(file: string, volume = 1) {
 /** Llamar con slotId='worldcup' para usar sonidos reales; cualquier otro usa Web Audio */
 export const sfx = {
   spin(slotId?: string) {
-    if (slotId === 'worldcup') { playWav('spin.wav', 0.8); return; }
+    if (slotId === 'worldcup') {
+      stopSpin();
+      spinAudio = playWav('spin.wav', 0.8);
+      return;
+    }
     for (let i = 0; i < 8; i++) tone(80 + i * 15, 0.08, 'sawtooth', 0.06, i * 0.07);
   },
 
+  stopSpin,   // expuesto para llamarlo desde Game.tsx cuando paran los rodillos
+
   reelStop(reelIndex: number, slotId?: string) {
-    if (slotId === 'worldcup') { playWav('stop.wav', 0.7); return; }
+    if (slotId === 'worldcup') { stopSpin(); playWav('stop.wav', 0.7); return; }
     tone(220 + reelIndex * 80, 0.06, 'square', 0.1, 0);
   },
 
