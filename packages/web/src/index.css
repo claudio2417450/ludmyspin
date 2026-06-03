@@ -129,6 +129,16 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 }
 .game-header__btn:hover { color: var(--text); border-color: var(--text-dim); }
 
+/* ── Nombre del slot activo ──────────────────────────────────────────────── */
+.game-slot-name {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
 /* ── Balance bar compacta ────────────────────────────────────────────────── */
 .balance-bar {
   display: flex;

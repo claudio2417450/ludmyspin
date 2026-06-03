@@ -134,21 +134,9 @@ export function Game({ initialSlotId, balance, username, onBalance, onLogout, on
         <button className="withdraw-btn" onClick={() => setShowWithdraw(true)} title="Retirar">💸</button>
       </div>
 
-      {/* ── Selector de slot ────────────────────────────────────────────── */}
-      {slots.length > 1 && (
-        <div className="slot-selector">
-          {slots.map((s) => (
-            <button
-              key={s.id}
-              className={`slot-tab${selectedSlot?.id === s.id ? ' slot-tab--active' : ''}`}
-              onClick={() => { setSelectedSlot(s); resetToIdle(); }}
-              disabled={isBusy}
-            >
-              {s.name}
-              {s.paylines.length > 1 && <span className="slot-tab__badge">{s.paylines.length}L</span>}
-            </button>
-          ))}
-        </div>
+      {/* ── Nombre del slot activo (reemplaza el selector) ─────────────── */}
+      {selectedSlot && (
+        <div className="game-slot-name">{selectedSlot.name}</div>
       )}
 
       {/* ── Máquina (área central que se expande) ───────────────────────── */}
