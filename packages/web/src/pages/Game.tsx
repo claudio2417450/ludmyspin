@@ -66,21 +66,26 @@ export function Game({ initialSlotId, balance, username, onBalance, onLogout, on
     setBet((prev) => Math.max(minBet, Math.min(maxBet, prev)));
   }, [minBet, maxBet]);
 
-  // Sonidos
+  // Precargar sonidos de fútbol cuando se selecciona el slot
   useEffect(() => {
-    if (phase === 'spinning' && prevPhase.current === 'idle') sfx.spin();
+    if (slotId === 'worldcup') sfx.preloadFootball();
+  }, [slotId]);
+
+  // Sonidos — pasan el slotId para elegir banco de sonidos
+  useEffect(() => {
+    if (phase === 'spinning' && prevPhase.current === 'idle') sfx.spin(slotId);
     if (phase === 'stopped' && prevPhase.current !== 'stopped') {
-      [0, 350, 700].forEach((delay, i) => setTimeout(() => sfx.reelStop(i), delay));
+      [0, 350, 700].forEach((delay, i) => setTimeout(() => sfx.reelStop(i, slotId), delay));
       setTimeout(() => {
         const payout = result?.payout ?? 0;
-        if (result?.jackpot?.won)              sfx.jackpot();
-        else if ((result?.features.freeSpinsGiven ?? 0) > 0) sfx.freeSpins();
-        else if (payout >= bet * 10)           sfx.bigWin();
-        else if (payout > 0)                   sfx.smallWin();
+        if (result?.jackpot?.won)                            sfx.jackpot(slotId);
+        else if ((result?.features.freeSpinsGiven ?? 0) > 0) sfx.freeSpins(slotId);
+        else if (payout >= bet * 10)                         sfx.bigWin(slotId);
+        else if (payout > 0)                                 sfx.smallWin(slotId);
       }, 800);
     }
     prevPhase.current = phase;
-  }, [phase, result, bet]);
+  }, [phase, result, bet, slotId]);
 
   // Win overlay
   useEffect(() => {
