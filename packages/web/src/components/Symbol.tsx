@@ -42,20 +42,21 @@ function FootballSymbol({ name, size, classes }: { name: string; size: number; c
   const meta = FOOTBALL_META[name];
   const [loaded, setLoaded] = useState(false);
 
-  // Escalar el atlas para que el sprite encaje en el símbolo (ancho = size)
-  const scale    = size / SPRITE_W;
+  // Escalar para que el sprite quepa entero en una celda CUADRADA (size × size).
+  // El sprite es 160×280 (ratio 0.571), así escalamos por la altura para que
+  // el jugador entero entre en el cuadrado.
+  const scale    = size / SPRITE_H;          // escalar por alto: encaja full body
   const imgW     = SHEET_W * scale;
   const imgH     = SHEET_H * scale;
-  const offsetX  = meta.x * scale;
+  const offsetX  = meta.x * scale - (size - SPRITE_W * scale) / 2;  // centrar horizontalmente
   const offsetY  = meta.y * scale;
-  const spriteH  = SPRITE_H * scale;  // alto del sprite escalado
 
   return (
     <div
       className={classes}
       style={{
         width: size,
-        height: spriteH,     // más alto que ancho → retrato del jugador
+        height: size,          // celda cuadrada — mismo que frutas
         background: loaded ? 'transparent' : meta.bg,
         borderRadius: 10,
         overflow: 'hidden',
