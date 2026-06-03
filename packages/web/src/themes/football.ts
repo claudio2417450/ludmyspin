@@ -14,7 +14,7 @@ export interface FootballSprite {
   bg: string;
 }
 
-const SHEET = '/themes/futbol/atlas_jugadores.webp';
+const SHEET = '/themes/mi-tema/symbols/futbol/atlas_jugadores.webp';
 export const SHEET_W = 1280;
 export const SHEET_H = 1960;
 export const SPRITE_W = 160;
